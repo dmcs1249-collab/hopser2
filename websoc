@@ -8,7 +8,7 @@ local player = Players.LocalPlayer
 
 --// CONFIG
 local API_URL = "http://127.0.0.1:8080/next"  -- 🔗 Địa chỉ server Python
-local CHECK_INTERVAL = 1                     -- mỗi 5 giây hỏi 1 lần
+local CHECK_INTERVAL = 0.5                    -- mỗi 0.5 giây hỏi 1 lần
 local AUTO_KICK_TIME = 15 * 60                -- tự kick sau 15 phút (đổi server)
 
 print("🚀 CT Hopper Client đang chạy... (Mode: HTTP Request)")
@@ -61,13 +61,14 @@ local function getNextJob()
 end
 
 --// MAIN LOOP
-while task.wait(CHECK_INTERVAL) do
+while true do
     local jobId, placeId = getNextJob()
     if jobId and placeId then
         print("🚀 Teleporting đến server mới:", jobId)
-        task.wait(0.5)
+        task.wait(0.5) -- Optional delay to avoid rapid consecutive requests
         pcall(function()
             TeleportService:TeleportToPlaceInstance(placeId, jobId, player)
         end)
     end
+    task.wait(CHECK_INTERVAL)
 end
